@@ -1,0 +1,5 @@
+PyQt5>=5.15.0
+opencv-python>=4.5.0
+pyserial>=3.5
+numpy>=1.19.0
+pygame>=2.0.0  # 用于游戏手柄支持 
