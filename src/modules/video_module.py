@@ -4,6 +4,7 @@ import socket
 import threading
 from PyQt5.QtCore import QThread, pyqtSignal
 from typing import Optional, Tuple
+from PIL import Image, ImageDraw, ImageFont
 
 class VideoReceiver(QThread):
     frame_received = pyqtSignal(np.ndarray)
@@ -112,16 +113,31 @@ class VideoOverlay:
         # 创建叠加层
         overlay = frame.copy()
         
-        # 文本颜色 (BGR格式的白色)
+        # 将OpenCV图像转换为PIL图像
+        pil_image = Image.fromarray(cv2.cvtColor(overlay, cv2.COLOR_BGR2RGB))
+        draw = ImageDraw.Draw(pil_image)
+        
+        # 加载中文字体
+        try:
+            font = ImageFont.truetype("simhei.ttf", 24)  # 使用黑体
+        except:
+            font = ImageFont.load_default()  # 如果找不到字体，使用默认字体
+        
+        # 文本颜色 (RGB格式的白色)
         text_color = (255, 255, 255)
         
         # 添加文本信息
-        cv2.putText(overlay, f"深度: {depth:.1f}m", (10, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, text_color, 2)
-        cv2.putText(overlay, f"航向: {heading:.1f}°", (10, 60),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, text_color, 2)
-        cv2.putText(overlay, f"电压: {voltage:.1f}V", (10, 90),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, text_color, 2)
+        texts = [
+            f"深度: {depth:.1f}m",
+            f"航向: {heading:.1f}°",
+            f"电压: {voltage:.1f}V"
+        ]
+        
+        for i, text in enumerate(texts):
+            draw.text((10, 30 + i * 30), text, font=font, fill=text_color)
+        
+        # 将PIL图像转回OpenCV格式
+        overlay = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
         
         # 合并原始帧和叠加层
         alpha = 0.7

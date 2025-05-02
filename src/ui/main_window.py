@@ -131,8 +131,10 @@ class MainWindow(QMainWindow):
     
     def update_sensor_data(self, data: dict):
         """更新传感器数据显示"""
-        self.temp_label.setText(f"舱内温度: {data['temperature']:.1f}°C")
-        self.humid_label.setText(f"舱内湿度: {data['humidity']:.1f}%")
+        # 判断是否为模拟数据
+        suffix = '（模拟）' if self.serial_module.simulation_mode else ''
+        self.temp_label.setText(f"舱内温度: {data['temperature']:.1f}°C{suffix}")
+        self.humid_label.setText(f"舱内湿度: {data['humidity']:.1f}%{suffix}")
     
     def update_gamepad_data(self, data: dict):
         """更新手柄数据显示"""
