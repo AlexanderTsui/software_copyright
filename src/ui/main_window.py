@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QLabel, QFrame)
+                             QPushButton, QLabel, QFrame, QInputDialog)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QImage, QPixmap
 import cv2
@@ -157,11 +157,23 @@ class MainWindow(QMainWindow):
     
     def on_port_button_clicked(self):
         """处理串口按钮点击事件"""
-        # TODO: 显示串口选择对话框
         available_ports = self.serial_module.list_ports()
         if available_ports:
-            # 这里简化处理，直接连接第一个可用串口
-            self.serial_module.connect(available_ports[0])
+            # 弹出下拉选择框，让用户选择串口
+            port, ok = QInputDialog.getItem(
+                self,
+                "选择串口号",
+                "请选择要连接的串口：",
+                available_ports,
+                0,
+                False
+            )
+            if ok and port:
+                self.serial_module.connect(port)
+        else:
+            # 没有可用串口，弹出提示
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.information(self, "提示", "未检测到可用串口。")
     
     def handle_error(self, error_msg: str):
         """处理错误信息"""
