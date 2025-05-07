@@ -104,7 +104,15 @@ class MainWindow(QMainWindow):
         """启动所有模块"""
         self.video_receiver.start()
         self.serial_module.start()
+        
+        # 启动手柄模块并检查连接状态
         self.gamepad_module.start()
+        if self.gamepad_module.connect():
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.information(self, "手柄状态", "手柄连接成功！")
+        else:
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(self, "手柄状态", "未检测到手柄，请检查连接！")
     
     def update_video_frame(self, frame: np.ndarray):
         """更新视频显示"""

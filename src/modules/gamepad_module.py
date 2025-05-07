@@ -29,6 +29,7 @@ class GamepadModule(QThread):
                 self.joystick.init()
                 self.simulation_mode = False
                 self.connection_status.emit(True)
+                print("手柄连接成功")
                 return True
         except Exception as e:
             self.error_occurred.emit(f"游戏手柄连接失败: {str(e)}")
@@ -60,7 +61,7 @@ class GamepadModule(QThread):
         
         try:
             pygame.event.pump()
-            
+            print("读取手柄数据成功")
             return {
                 'left_stick_x': self.joystick.get_axis(0),
                 'left_stick_y': self.joystick.get_axis(1),
