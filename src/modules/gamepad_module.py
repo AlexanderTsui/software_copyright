@@ -61,7 +61,7 @@ class GamepadModule(QThread):
         
         try:
             pygame.event.pump()
-            print("读取手柄数据成功")
+            
             return {
                 'left_stick_x': self.joystick.get_axis(0),
                 'left_stick_y': self.joystick.get_axis(1),
